@@ -5,6 +5,7 @@ library('dplyr')
 library('tidyr')
 library('stringr')
 library('purrr')
+library('utils')
 
 #buncha variables, some of which I used in the deliverable, some not
 
@@ -23,15 +24,41 @@ subfiles <- c('body_acc_x_test.txt',
               )
 rpath <- "Wearables/UCI_HAR_Dataset/"
 
+practicetest <- read.table('test/X_test.txt', header = FALSE)
 
-#Cutting to the chase
 
-#Read the two X_test files in
-testvalue <- read.csv(paste0(rpath, folders[1], '/', files[2], folders[1], '.txt'), header = FALSE)
-trainvalue <- read.rcsv(paste0(rpath, folders[2], '/', files[2], folders[2], '.txt'), header = FALSE)
+#1.  Read files in from data set
 
-#Combine them
-together <- rbind(testvalue, trainvalue)
+#Read the test files in
+testX <- read.table('test/X_test.txt', header = FALSE)
+testy <- read.table('test/y_test.txt', header = FALSE)
+testsubject <- read.table('test/subject_test.txt', header = FALSE)
+
+#Read the train files in
+trainX <- read.table('train/X_train.txt', header = FALSE)
+trainy <- read.table('train/y_train.txt', header = FALSE)
+trainsubject <- read.table('train/subject_train.txt', header = FALSE)
+
+#Read descriptor files in
+features <- read.table('features.txt', as.is = TRUE)
+activities <- read.table('activity_labels.txt')
+colnames(activities) <- c("activityId", "activityLabel")
+
+#2.  Merge them, first by columns, then by rows
+togethertest <- cbind(testy, testsubject, testX)
+togethertrain <- cbind(trainy, trainsubject, trainX)
+together <- rbind(togethertest, togethertrain)
+colnames(together) <- c('Activity', 'Subject', make.unique(features[,2], '_'))
+
+#3.  Extract the set of mean and std features described in the 'features' dataset, then keep only the appropriate columns
+selectfeatures <- features %>% 
+  filter(str_detect(V2, pattern = 'mean|std')) %>%
+  select(V2) %>%
+  rename(features = V2)
+filtered <- together %>% select('Activity', 'Subject', selectfeatures[,1])
+
+
+
 #Coerce to character
 together$V1 <- as.character(together$V1)
 #Turn it into one big character vector
@@ -84,7 +111,7 @@ dataset1 <- cbind(features, calculated)
 ####This is the path to the second dataset
 
 #First read in complementary datasets
-subjectTest <- read.csv(paste0(rpath, folders[1], '/', files[1], folders[1], '.txt'), header = FALSE)
+subjectTest <- read.csv(header = FALSE)
 subjectTest <- subjectTest %>% rename(subject = V1)
 
 subjectTrain <- read.csv(paste0(rpath, folders[2], '/', files[1], folders[2], '.txt'), header = FALSE)
@@ -98,6 +125,7 @@ Y_Train <- Y_Train %>% rename(Activity = V1)
 
 
 #Ideally I would build loops that accomplish these steps, but this manual approach also fulfills the assignment.  Also, in the end, it doesn't appear I need to do this, but I suspect it would be useful for other analyses.
+
 
 body_acc_x_test <- read.csv('test/Inertial Signals/body_acc_x_test.txt', header = FALSE)
 body_acc_x_test <- body_acc_x_test %>% rename(body_acc_x = V1)
