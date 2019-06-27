@@ -1,0 +1,12 @@
+The analysis relies on data provided as part of the JHU "Getting and Cleaning Data" course.  The data is available at:
+https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip
+
+The analysis follows these steps:
+
+1.  Imports and combines files from the (currently segregated) "test" and "train" data sets.  These include the data itself, a description of the categories of activities a user pursues (there are 6, each with a descriptive name in the activity_labels file), and an identifier for the test subject (there are 30),  The data itself corresponds to 561 readings, each having a descriptive name found in the 'features' document.  
+
+2.  Of the 561 readings, we are focusing on only the readings that correspond to descriptive names that include only measurements of 'mean' and 'standard deviation'.  The analysis identifies which of the 561 readings include mean and standard deviation, and then matches them to the actual readings corresponding to these words.  This particular analysis groups these two steps in a single process (#2 and #4) because it makes more coding sense to so than the prescribed path.
+
+3.  The analysis then joins the dataset with the 'activity_label' dataset in order to provide a more meaningful description of the activities the test subject is undergoing.
+
+5.  The dataset is grouped by test subject and by activity.   The mean value of each readings category is presented.  
