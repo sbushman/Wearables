@@ -99,7 +99,7 @@ Y_Train <- Y_Train %>% rename(Activity = V1)
 
 #Ideally I would build loops that accomplish these steps, but this manual approach also fulfills the assignment.  Also, in the end, it doesn't appear I need to do this, but I suspect it would be useful for other analyses.
 
-body_acc_x_test <- read.csv('Wearables/UCI_HAR_Dataset/test/Inertial Signals/body_acc_x_test.txt', header = FALSE)
+body_acc_x_test <- read.csv('test/Inertial Signals/body_acc_x_test.txt', header = FALSE)
 body_acc_x_test <- body_acc_x_test %>% rename(body_acc_x = V1)
 
 body_acc_y_test <- read.csv('Wearables/UCI_HAR_Dataset/test/Inertial Signals/body_acc_y_test.txt', header = FALSE)
